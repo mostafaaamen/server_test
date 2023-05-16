@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>img upload file</title>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+
+    <form action="" method="post" enctype="multipart/form-data">
+      <input type="file" id="file" name="image" />
+      <input type="button"  id="send" value="Upload" />
+    </form>
+    <div class="progress">
+<span id="progress"></span>
+<p id="test"></p>
+    </div>
+    <div id="all"></div>
+
+    <script>
+
+// upload
+
+      const file = document.getElementById("file");
+      const send = document.getElementById("send");
+      const all = document.getElementById("all");
+      const progressBar = document.getElementById("prgress");
+      send.onclick=function(){
+         const fileUpload = file.files[0];
+
+  const formData = new FormData();
+  formData.append('image', fileUpload);
+
+  axios.post('/upload', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    },
+    onUploadProgress: function (progressEvent) {
+    const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+    document.getElementById("test").innerHTML=percentCompleted + "%"
+} })
+  .then(function (response) {
+    console.log('Response:', response);
+  })
+  .catch(function (error) {
+    console.log('Error:', error);
+  });
+      }
+      axios
+        .get("/img")
+        .then(function ({ data }) {
+          for (let i = 0; i < data.length; i++) {
+            const img = document.createElement("img");
+            img.src = data[i];
+            all.appendChild(img);
+          }
+        })
+        .catch(function (error) {
+          console.log("Error:", error);
+        });
+    </script>
+  </body>
+</html>
